@@ -3,6 +3,22 @@
 
 - include_tasks: configure.yml
 
+- name: Debug - Register outputs
+  shell: |
+    echo "Python Executable path: $(pyenv which python)"
+    echo "Python Version: $(python --version)"
+    echo "Ansible Version: $(ansible --version)"
+    echo "Ansible Galaxy collections: $(ansible-galaxy collection list)"
+    echo "Path: $PATH"
+    echo "ansible_python_interpreter: {{ ansible_python_interpreter }}"
+  args:
+    executable: /bin/bash
+  register: debug_output
+
+- name: Debug - Print outputs
+  debug:
+    msg: "{{ debug_output.stdout_lines }}"
+
 - name: Stop vault
   community.docker.docker_compose_v2:
     project_src: "{{ vault_directory }}"
